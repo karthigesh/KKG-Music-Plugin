@@ -133,11 +133,12 @@
     margin: 25px;
     height: 100px;
     width: 100px;
-    background-image: url("https://images.pexels.com/photos/262034/pexels-photo-262034.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260");
     background-size: cover;
     border-radius: 15%;
   }
-  
+  .track-art.rounding {
+    animation: rotation 2s infinite linear;
+  }
   .now-playing {
     font-size: 1rem;
   }
@@ -295,5 +296,13 @@
   @keyframes to-right {
     to {
       left: 350%;
+    }
+  }
+  @keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(359deg);
     }
   }

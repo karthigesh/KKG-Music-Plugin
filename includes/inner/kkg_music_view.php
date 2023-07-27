@@ -22,9 +22,9 @@
             <div class="track-name">Track Name</div>
         </div>
         <div class="buttons">
-            <div class="prev-track" onclick="prevTrack()"><i class="fa fa-step-backward fa-2x"></i></div>
+            <!-- <div class="prev-track" onclick="prevTrack()"><i class="fa fa-step-backward fa-2x"></i></div> -->
             <div class="playpause-track" onclick="playpauseTrack()"><i class="fa fa-play-circle fa-5x"></i></div>
-            <div class="next-track" onclick="nextTrack()"><i class="fa fa-step-forward fa-2x"></i></div>
+            <!-- <div class="next-track" onclick="nextTrack()"><i class="fa fa-step-forward fa-2x"></i></div> -->
         </div>
         <div class="slider_container">
             <div class="current-time">00:00</div>
@@ -64,7 +64,7 @@
         let track_list = [
           {
             name: "<?php echo $GLOBALS[ 'viewMusicTitle' ];?>",
-            image: "https://images.pexels.com/photos/2264753/pexels-photo-2264753.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250&w=250",
+            image: "<?php echo $GLOBALS[ 'viewMusicPlayer' ];?>",
             path: "<?php echo $GLOBALS[ 'viewMusicContent' ];?>"
           }
         ];
@@ -142,6 +142,7 @@
           // Replace icon with the pause icon
           playpause_btn.innerHTML = '<i class="fa fa-pause-circle fa-5x"></i>';
           animateSect.style.display = 'block';
+          track_art.classList.add("rounding");
         }
         
         function pauseTrack() {
@@ -151,6 +152,7 @@
           // Replace icon with the play icon
           playpause_btn.innerHTML = '<i class="fa fa-play-circle fa-5x"></i>';
           animateSect.style.display = 'none';
+          track_art.classList.remove("rounding");
         }
         
         function nextTrack() {

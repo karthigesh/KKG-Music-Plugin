@@ -1,8 +1,26 @@
 <?php
-require_once plugin_dir_path( __FILE__ ) . 'kkgmp-functions.php';
+    $musicName = 'No file chosen...';
+    $musicUrl = '';
+    $required = 'required';
+    if ( filter_has_var( INPUT_GET, 'action' ) ) {
+        $data = getkkgmusic( filter_input( INPUT_GET, 'element' ) );
+        if($data){
+          $musicUrl = ( isset( $data[ 'sub_musicurl' ] ) )?$data[ 'sub_musicurl' ]:'';
+          $musicName = basename($musicUrl);
+          $required = '';
+        }
+    }
+   
 ?>
+<div class='wrap'>
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Welcome to KKG Music App!</h1>
+        </div>
+    </div>
 <form method = 'POST' enctype="multipart/form-data">
 <input type = 'hidden' name = 'action' value = 'kkg_music_upload'>
+<input type = 'hidden' name = 'existFile' value = '<?php echo $musicUrl;?>'>
 <?php wp_nonce_field();
 ?>
 <input type = 'hidden' name = 'redirectToUrl' value = ''>
@@ -14,11 +32,12 @@ require_once plugin_dir_path( __FILE__ ) . 'kkgmp-functions.php';
 <div class="file-upload">
   <div class="file-select">
     <div class="file-select-button" id="fileName">Choose File</div>
-    <div class="file-select-name" id="noFile">No file chosen...</div> 
-    <input type="file" name="chooseFile" id="chooseFile" accept="audio/mp3" required>
+    <div class="file-select-name" id="noFile"><?php echo $musicName;?></div> 
+    <input type="file" name="chooseFile" id="chooseFile" accept="audio/mp3" <?php echo $required;?>>
   </div>
 </div>
 </div>
 </div><!-- / row -->
 <input type = 'submit' name = 'Submit' class = 'btn btn-primary'>
 </form>
+</div><!-- / wrap -->

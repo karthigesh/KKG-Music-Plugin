@@ -1,3 +1,18 @@
+<?php
+    $musicUrl = $musicTitle = '';
+    $title = esc_html( 'kindly Enter the Music Streaming URL', 'kkg_music' );
+    if ( filter_has_var( INPUT_GET, 'action' ) ) {
+        $data = getkkgmusic( filter_input( INPUT_GET, 'element' ) );
+        if($data){
+          $title =esc_html( 'kindly Update the Music Streaming URL', 'kkg_music' );
+          $musicUrl = ( isset( $data[ 'sub_musicurl' ] ) )?$data[ 'sub_musicurl' ]:'';
+          $musicTitle = ( isset( $data[ 'music_title' ] ) )?$data[ 'music_title' ]:'';
+        }
+    }
+    $formmusicTitle = $title;
+    $formmusicUrl = render_input( 'url', 'musicUrl', 'musicUrl', $musicUrl, TRUE );
+    $formmusicContent = render_input( 'text', 'musicTitle', 'musicTitle', $musicTitle, TRUE );
+?>
 <div class='wrap'>
     <div class="row">
         <div class="col-md-12">
@@ -13,15 +28,15 @@
           <p>Title</p>
         </div>
         <div class = 'col-md-8'>
-          <?php echo $GLOBALS['formmusicContent'];?>
+          <?php echo $formmusicContent;?>
         </div>
       </div><!-- / row -->    
       <div class = 'row mt-3'>
         <div class = 'col-md-4'>          
-          <p><?php echo $GLOBALS['formmusicTitle'];?></p>
+          <p><?php echo $formmusicTitle;?></p>
         </div>
         <div class = 'col-md-8'>
-          <?php echo $GLOBALS['formmusicUrl'];?>
+          <?php echo $formmusicUrl;?>
         </div>
       </div><!-- / row -->
       <input type = 'submit' name = 'Submit' class = 'btn btn-primary urlsubmit'>

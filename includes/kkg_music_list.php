@@ -46,8 +46,10 @@ class kkg_music_list_Table extends WP_List_Table {
 
     function prepare_items()
  {
-        //data
-        if ( isset($_POST['s']) ) {
+        $searchcol = array(
+            'music_title'
+        );
+        if ( isset($_POST['s']) && isset($_POST['page']) && $_POST['page'] == 'kkg_musics') {
             $this->table_data = $this->get_table_data($_POST['s']);
         } else {
             $this->table_data = $this->get_table_data();
@@ -61,9 +63,9 @@ class kkg_music_list_Table extends WP_List_Table {
         /* pagination */
         $per_page = 5;
         $current_page = $this->get_pagenum();
-        $total_items = count($this->get_table_data());
+        $total_items = count($this->table_data);
 
-        $this->table_data = array_slice($this->get_table_data(), (($current_page - 1) * $per_page), $per_page);
+        $this->table_data = array_slice($this->table_data, (($current_page - 1) * $per_page), $per_page);
 
         $this->set_pagination_args(array(
                 'total_items' => $total_items, // total number of items
@@ -75,13 +77,16 @@ class kkg_music_list_Table extends WP_List_Table {
 
     // Get table data
 
-    private function get_table_data() {
+    private function get_table_data($s="") {
         global $wpdb;
 
         $table = $wpdb->prefix . 'kkg_music_submissions';
-
+        $query = "SELECT * from {$table}";
+        if($s != ""){
+            $query .= " where music_title like '%{$s}%'";
+        }
         return $wpdb->get_results(
-            "SELECT * from {$table}",
+            $query,
             ARRAY_A
         );
     }

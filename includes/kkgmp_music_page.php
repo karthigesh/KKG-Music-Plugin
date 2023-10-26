@@ -5,11 +5,9 @@ Description: This is my first plugin! It used to create a music link!
 Author: Karthigesh
 */
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-    die;
-}
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class kkgmp_music {
+class kkgmusic_music {
 
     private $musicId = 0;
 

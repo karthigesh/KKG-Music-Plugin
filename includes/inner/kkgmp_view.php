@@ -1,19 +1,31 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
+<div class = 'wrap'>
+<div class = 'row'>
+<div class = 'col-md-12'>
+<h1><?php echo esc_html( 'Welcome to KKG Music App!');?></h1>
+</div>
+</div>
+<div class = 'row'>
+<div class = 'col-md-4'></div>
+<div class = 'col-md-4' style="overflow: hidden;padding: 0;">
 <div class = 'maine'>
-<link rel="stylesheet" href="<?php echo plugin_dir_url( __FILE__ ) . 'fontawesome/css/all.css';?>">
-<link rel="stylesheet" href="<?php echo plugin_dir_url( __FILE__ ) . 'css/css-file.css?'.rand(1,20000);?>">
-<script src="<?php echo plugin_dir_url( __FILE__ ) . 'fontawesome/js/all.js;'?>"></script>
 <div class="player">
-  <div class="visual">
-    <div class="visualization stop"></div>
+  <div class="animatesect" aria-hidden="true">
+    <span class="card__line card__line_left"></span>
+    <span class="card__line card__line_right"></span>
+    <span class="card__line card__line_top"></span>
+    <span class="card__line card__line_bottom"></span>
   </div>
-        <div class="details">            
-            <!-- <div class="track-art"></div> -->
-            <div class="track-name">Track Name</div>
+        <div class="details">
+            <div class="track-art"></div>
+            <div class="track-name"><?php echo esc_html( 'Track Name');?></div>
         </div>
         <div class="buttons">
-            <div class="prev-track" onclick="prevTrack()"><i class="fa fa-step-backward fa-2x"></i></div>
-            <div class="playpause-track" onclick="playpauseTrack()"><i class="fa fa-play-circle fa-3x"></i></div>
-            <div class="next-track" onclick="nextTrack()"><i class="fa fa-step-forward fa-2x"></i></div>
+            <!-- <div class="prev-track" onclick="prevTrack()"><i class="fa fa-step-backward fa-2x"></i></div> -->
+            <div class="playpause-track" onclick="playpauseTrack()"><i class="fa fa-play-circle fa-5x"></i></div>
+            <!-- <div class="next-track" onclick="nextTrack()"><i class="fa fa-step-forward fa-2x"></i></div> -->
         </div>
         <div class="slider_container">
             <div class="current-time">00:00</div>
@@ -26,19 +38,9 @@
             <i class="fa fa-volume-up"></i>
         </div>
     </div>
-    <?php
-    $musicSects = [];
-    if(isset($GLOBALS[ 'frontMusic' ]) && (count($GLOBALS[ 'frontMusic' ])>0)){
-      foreach($GLOBALS[ 'frontMusic' ] as $k=>$musics){
-        $musicSects[$k]['name'] = $musics['music_title'];
-        $musicSects[$k]['image'] = $GLOBALS[ 'viewMusicPlayer' ];
-        $musicSects[$k]['path'] = $musics['sub_musicurl'];
-      }
-    }
-    ?>
     <script>
         let player = document.querySelector(".player");
-        // let track_art = document.querySelector(".track-art");
+        let track_art = document.querySelector(".track-art");
         let track_name = document.querySelector(".track-name");
         
         let playpause_btn = document.querySelector(".playpause-track");
@@ -49,9 +51,8 @@
         let volume_slider = document.querySelector(".volume_slider");
         let curr_time = document.querySelector(".current-time");
         let total_duration = document.querySelector(".total-duration");
-        let visualization = document.querySelector(".visualization");
         
-        // let animateSect = document.querySelector(".animatesect");
+        let animateSect = document.querySelector(".animatesect");
         
         let track_index = 0;
         let isPlaying = false;
@@ -61,7 +62,14 @@
         let curr_track = document.createElement('audio');
         
         // Define the tracks that have to be played
-        let track_list = <?php echo json_encode($musicSects);?>;
+        let track_list = [
+          {
+            name: "<?php echo esc_html($GLOBALS[ 'viewMusicTitle' ]);?>",
+            image: "<?php echo esc_url($GLOBALS[ 'viewMusicPlayer' ]);?>",
+            path: "<?php echo esc_url($GLOBALS[ 'viewMusicContent' ]);?>"
+          }
+        ];
+        
         function loadTrack(track_index) {
           clearInterval(updateTimer);
           resetValues();
@@ -71,7 +79,7 @@
           curr_track.load();
         
           // Update details of the track
-          //track_art.style.backgroundImage = "url(" + track_list[track_index].image + ")";
+          track_art.style.backgroundImage = "url(" + track_list[track_index].image + ")";
           track_name.textContent = track_list[track_index].name;
         
           // Set an interval of 1000 milliseconds for updating the seek slider
@@ -82,6 +90,7 @@
         
           // Apply a random background color
           random_bg_color();
+          random_bg_flow();
         }
         
         function random_bg_color() {        
@@ -91,9 +100,28 @@
           let blue = Math.floor(Math.random() * 256) + 64;
         
           // Construct a color withe the given values
-          let bgColor = "rgb(130, 148, 131)";
+          let bgColor = "rgb(" + red + "," + green + "," + blue + ")";
           // Set the background to that color
           document.querySelector(".player").style.background = bgColor;
+        }
+
+        function random_bg_flow() {        
+          // Get a random number between 64 to 256 (for getting lighter colors)
+          let red = Math.floor(Math.random() * 256) + 0;
+          let green = Math.floor(Math.random() * 256) + 0;
+          let blue = Math.floor(Math.random() * 256) + 0;
+        
+          // Construct a color withe the given values
+          let card__line_left = "linear-gradient(to bottom, rgb(" + red + "," + green + "," + blue + "), transparent)";
+          let card__line_right = "linear-gradient(to bottom, transparent, rgb(" + red + "," + green + "," + blue + "))";
+          let card__line_top = "linear-gradient(to right, transparent, rgb(" + red + "," + green + "," + blue + "))";
+          let card__line_bottom = "linear-gradient(to right, rgb(" + red + "," + green + "," + blue + "),transparent)";
+
+          // Set the background to that color
+          document.querySelector(".card__line_left").style.background = card__line_left;
+          document.querySelector(".card__line_right").style.background = card__line_right;
+          document.querySelector(".card__line_top").style.background = card__line_top;
+          document.querySelector(".card__line_bottom").style.background = card__line_bottom;
         }
         
         // Reset Values
@@ -113,10 +141,9 @@
           isPlaying = true;
         
           // Replace icon with the pause icon
-          playpause_btn.innerHTML = '<i class="fa fa-pause-circle fa-3x"></i>';
-          // animateSect.style.display = 'block';
-          visualization.classList.add("start");
-          visualization.classList.remove("stop");
+          playpause_btn.innerHTML = '<i class="fa fa-pause-circle fa-5x"></i>';
+          animateSect.style.display = 'block';
+          track_art.classList.add("rounding");
         }
         
         function pauseTrack() {
@@ -124,10 +151,9 @@
           isPlaying = false;
         
           // Replace icon with the play icon
-          playpause_btn.innerHTML = '<i class="fa fa-play-circle fa-3x"></i>';
-          // animateSect.style.display = 'none';
-          visualization.classList.add("stop");
-          visualization.classList.remove("start");
+          playpause_btn.innerHTML = '<i class="fa fa-play-circle fa-5x"></i>';
+          animateSect.style.display = 'none';
+          track_art.classList.remove("rounding");
         }
         
         function nextTrack() {
@@ -182,6 +208,9 @@
         
         // Load the first track in the tracklist
         loadTrack(track_index);
-
     </script>
 </div>
+</div>
+<div class = 'col-md-4'></div>
+</div><!-- / row -->
+</div><!-- / wrap -->

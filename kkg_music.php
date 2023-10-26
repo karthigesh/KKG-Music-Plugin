@@ -7,6 +7,7 @@ Requires at least:6.2.2
 Requires PHP: 8.0
 Author: Karthigesh
 License: GPLv2
+GITHUB URL:https://github.com/karthigesh/KKG-Music-Plugin/tree/main
 */
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {

@@ -1,18 +1,16 @@
 <?php
 /*
 Plugin Name: KKG Music Plugin
-Description: This is my first plugin! It used to create a music link!
+Description: It used to create a music link!
 Author: Karthigesh
 */
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-    die;
-}
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 if ( ! class_exists( 'WP_List_Table' ) ) {
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class kkg_music_list_Table extends WP_List_Table {
+class kkgmp_list_Table extends WP_List_Table {
 
     // Here we will add our code
     // define $table_data property
@@ -48,9 +46,6 @@ class kkg_music_list_Table extends WP_List_Table {
 
     function prepare_items()
  {
-        $searchcol = array(
-            'music_title'
-        );
         if ( isset($_POST['s']) && isset($_POST['page']) && $_POST['page'] == 'kkg_musics') {
             $this->table_data = $this->get_table_data($_POST['s']);
         } else {

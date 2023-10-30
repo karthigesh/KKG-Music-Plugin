@@ -1,4 +1,17 @@
-.file-upload {
+/*
+Theme Name: KKG Music WordPress Plugin
+Author: Karthigesh
+Author URI: https://creativethinker2016.wordpress.com/
+Theme URI:https://creativethinker2016.wordpress.com/
+Version: 1.0
+Text Domain: kkg-music
+Requires PHP: 5.6
+Tested up to: 6.2
+StyleSheet Variant: Plugin Styles
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+*/
+  .file-upload {
     display: block;
     text-align: center;
     font-family: Helvetica, Arial, sans-serif;

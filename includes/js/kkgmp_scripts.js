@@ -1,10 +1,10 @@
 var urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('status')) {
-    // setTimeout(function () {
-    //     history.pushState('', '',
-    //         location.href.split('&')[0]);
-    //     location.reload();
-    // }, 10000); // 1 min = 1000 ms * 60 = 60000
+    setTimeout(function () {
+        history.pushState('', '',
+            location.href.split('&')[0]);
+        location.reload();
+    }, 10000); // 1 min = 1000 ms * 60 = 60000
 }
 jQuery(function ($) {
     $('#chooseFile').bind('change', function () {

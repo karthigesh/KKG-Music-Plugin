@@ -22,8 +22,8 @@ class kkgmp_list_Table extends WP_List_Table {
  {
         $columns = array(
             'cb'            => '<input type="checkbox" />',
-            'music_title'          => __( 'Title', 'kkg_music' ),
-            'sub_musicurl'          => __( 'Music URL', 'kkg_music' )
+            'music_title'          => __( 'Title', 'kkg-music' ),
+            'sub_musicurl'          => __( 'Music URL', 'kkg-music' )
         );
         return $columns;
     }
@@ -35,9 +35,9 @@ class kkgmp_list_Table extends WP_List_Table {
         $mode = $item[ 'mtype' ];
         $link = ($mode == 1)? 'add_music':'up_music';
         $actions = array(
-                'edit'      => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', $link, 'edit', $item[ 'sub_id' ],esc_html(__('Edit', 'kkg_music'))),
-                'delete'    => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', $_REQUEST['page'], 'delete', $item[ 'sub_id' ],esc_html(__('Delete', 'kkg_music'))),
-                'view'    => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', 'view_music', 'view', $item[ 'sub_id' ],esc_html(__('View', 'kkg_music'))),
+                'edit'      => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', $link, 'edit', $item[ 'sub_id' ],esc_html(__('Edit', 'kkg-music'))),
+                'delete'    => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', 'kkg_musics', 'delete', $item[ 'sub_id' ],esc_html(__('Delete', 'kkg-music'))),
+                'view'    => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', 'view_music', 'view', $item[ 'sub_id' ],esc_html(__('View', 'kkg-music'))),
         );
         return sprintf('%1$s %2$s', $item['music_title'], $this->row_actions($actions));
     }
@@ -47,7 +47,8 @@ class kkgmp_list_Table extends WP_List_Table {
     function prepare_items()
  {
         if ( isset($_POST['s']) && isset($_POST['page']) && $_POST['page'] == 'kkg_musics') {
-            $this->table_data = $this->get_table_data($_POST['s']);
+            $searchString = htmlspecialchars( esc_html($_POST[ 's' ]), ENT_QUOTES );
+            $this->table_data = $this->get_table_data($searchString);
         } else {
             $this->table_data = $this->get_table_data();
         }

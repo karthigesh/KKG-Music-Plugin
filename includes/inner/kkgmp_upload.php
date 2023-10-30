@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     $musicUrl = '';
     $required = 'required';
     if ( filter_has_var( INPUT_GET, 'action' ) ) {
-        $data = kkgmusic_getsingle( filter_input( INPUT_GET, 'element' ) );
+        $data = kkgmusic_getsingle( filter_input( INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT ) );
         if($data){
           $musicUrl = ( isset( $data[ 'sub_musicurl' ] ) )?$data[ 'sub_musicurl' ]:'';
           $musicName = basename($musicUrl);
@@ -22,9 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     </div>
 <form method = 'POST' enctype="multipart/form-data">
 <input type = 'hidden' name = 'action' value = 'kkg_music_upload'>
+<?php wp_nonce_field( 'kkg_music_upload' ); ?>
 <input type = 'hidden' name = 'existFile' value = '<?php echo esc_html($musicUrl);?>'>
-<?php wp_nonce_field();
-?>
 <input type = 'hidden' name = 'redirectToUrl' value = ''>
 <div class = 'row mt-2'>
 <div class = 'col-md-4'>

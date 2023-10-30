@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $musicUrl = $musicTitle = '';
 $title =  'kindly Enter the Music Streaming URL' ;
 if ( filter_has_var( INPUT_GET, 'action' ) ) {
-    $input = absint( filter_input( INPUT_GET, 'element' ) );
+    $input = absint( filter_input( INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT ) );
     $data = kkgmusic_getsingle( $input );
     if ( $data ) {
         $title =  'kindly Update the Music Streaming URL';
@@ -26,9 +26,8 @@ $formmusicHidden = kkgmusic_render_input( 'hidden', 'action', '', 'kkg_music_sav
 </div>
 <form method = 'POST'>
 <input type = 'hidden' name = 'action' value = 'kkg_music_save'>
-<?php wp_nonce_field();
-?>
-<?php echo wp_kses($formmusicHidden,array( 'input' => array('type' => array(),'name' => array(),'value' => array())));
+<?php wp_nonce_field( 'kkg_music_save' );
+echo wp_kses($formmusicHidden,array( 'input' => array('type' => array(),'name' => array(),'value' => array())));
 ?>
 <div class = 'row mt-2'>
 <div class = 'col-md-4'>

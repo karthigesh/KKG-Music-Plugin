@@ -314,13 +314,10 @@ function kkgmusic_view() {
     if ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'view_music' ) {
         if ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'view' ) {
             $musicContent = kkgmusic_getsingle( filter_input( INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT ) );
-            if ( $musicContent ) {
-                $GLOBALS[ 'viewMusicTitle' ] = $musicContent[ 'music_title' ];
-                $GLOBALS[ 'viewMusicPlayer' ] = plugins_url( 'kkg_music/includes/inner/imgs/dvd.png', __FILE__ );
-                $GLOBALS[ 'viewMusicContent' ] = $musicContent[ 'sub_musicurl' ];
+            if ( $musicContent ) {                
                 wp_enqueue_style( 'fa-css-file', plugin_dir_url( __FILE__ ) . 'fontawesome/css/all.css' );
                 wp_enqueue_script( 'fa-js-file', plugin_dir_url( __FILE__ ) . 'fontawesome/js/all.js' );
-                $html = include( plugin_dir_path( __FILE__ ) . 'inner/kkgmp_view.php' );
+                include( plugin_dir_path( __FILE__ ) . 'inner/kkgmp_view.php' );
             } else {
                 wp_safe_redirect( esc_url_raw( site_url( '/wp-admin/admin.php?page=kkg_musics' ) ), 307 );
                 die;
@@ -338,11 +335,8 @@ function kkgmusic_getfront() {
 // The shortcode function
 
 function kkgmusic_shortcode() {
-    $musicContent = kkgmusic_getfront();
-    $GLOBALS[ 'frontMusic' ] = $musicContent;
-    $GLOBALS[ 'viewMusicPlayer' ] = plugins_url( 'kkg_music/includes/inner/imgs/dvd.png', __FILE__ );
     wp_enqueue_style( 'fa-css-file', plugin_dir_url( __FILE__ ) . 'fontawesome/css/all.css' );
-    wp_enqueue_style( 'fa-css1-file', plugin_dir_url( __FILE__ ) . 'frontend/css/css-file.css' );
+    wp_enqueue_style( 'fa-css1-file', plugin_dir_url( __FILE__ ) . 'frontend/css/kkgmp_style.css' );
     wp_enqueue_script( 'fa-js-file', plugin_dir_url( __FILE__ ) . 'fontawesome/js/all.js' );
     include( plugin_dir_path( __FILE__ ) . 'frontend/kkgmp_view.php' );
 }

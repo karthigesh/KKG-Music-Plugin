@@ -1,6 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-$musicContent = kkgmusic_getfront();
+$musicContent = new kkgmusic_music();
+$musicList = $musicContent->getAllMusic();
 $musicView = plugins_url( 'kkg_music/includes/inner/imgs/dvd.png', __FILE__ );
 ?>
 <div class = 'maine'>
@@ -29,8 +30,8 @@ $musicView = plugins_url( 'kkg_music/includes/inner/imgs/dvd.png', __FILE__ );
     </div>
     <?php
     $musicSects = [];
-    if(isset($musicContent) && (count($musicContent)>0)){
-      foreach($musicContent as $k=>$musics){
+    if(isset($musicList) && (count($musicList)>0)){
+      foreach($musicList as $k=>$musics){
         $musicSects[$k]['name'] = esc_html($musics['music_title']);
         $musicSects[$k]['image'] = esc_url($musicView);
         $musicSects[$k]['path'] = esc_url($musics['sub_musicurl']);

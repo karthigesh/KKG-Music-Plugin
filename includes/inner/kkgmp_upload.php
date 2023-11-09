@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
     $musicName = 'No file chosen...';
     $musicUrl = $musicTitle = '';
+    $musicId = 0;
     $required = 'required';
     if ( filter_has_var( INPUT_GET, 'action' ) ) {
         $input = absint( filter_input( INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT ) );

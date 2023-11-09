@@ -1,17 +1,20 @@
 <?php
+
 /*
   Plugin Name: KKG Music Plugin
   Description:  It used to create a music link!
   Author: Karthigesh
  */
-if (!defined('ABSPATH'))exit;
+if (!defined('ABSPATH'))
+    exit;
 // Exit if accessed directly
 if (!function_exists('wp_get_current_user')) {
     include(ABSPATH . "wp-includes/pluggable.php");
 }
-require_once plugin_dir_path(__FILE__) . 'kkgmp_list.php';
+require_once plugin_dir_path(__FILE__) . 'kkgmp_list_table.php';
 require_once plugin_dir_path(__FILE__) . 'kkgmp_music_page.php';
 add_action('init', 'kkgmusic_checkPerm');
+
 function kkgmusic_checkPerm() {
     if (!current_user_can('edit_posts')) {
         die;
@@ -71,19 +74,40 @@ function kkgmusic_scripts() {
 
 add_action('admin_enqueue_scripts', 'kkgmusic_scripts');
 
+function kkgmusic_encryptor($action, $string) {
+    $output = false;
+
+    $encrypt_method = "AES-256-CBC";
+    //pls set your unique hashing key
+    $secret_key = 'kkgmp';
+    $secret_iv = 'music190';
+
+    // hash
+    $key = hash('sha256', $secret_key);
+
+    // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+    $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+    //do the encyption given text/string/number
+    if( $action == 'encrypt' ) {
+        $output1 = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+        $output = base64_encode($output1);
+    }
+    else if( $action == 'decrypt' ){
+    	//decrypt the given text/string/number
+        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+    }
+
+    return $output;
+}
+
 function kkgmusic_page_list() {
     ob_start();
-    if (filter_has_var(INPUT_GET, 'action')) {
-        $subId = filter_input(INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT);
-        $action = htmlspecialchars($_GET['action'], ENT_QUOTES);
-        kkgmusic_musicAction($subId, $action);
-    }
     kkgmusic_listHtml();
 }
 
 function kkgmusic_page_add() {
-    ob_start();
-    kkgmusic_addHtml();
+    include( plugin_dir_path(__FILE__) . 'inner/kkgmp_url.php' );
 }
 
 function kkgmusic_render_input($inputType, $name, $id, $value = '', $required = FALSE) {
@@ -112,62 +136,18 @@ function kkgmusic_render_input($inputType, $name, $id, $value = '', $required = 
 
 function kkgmusic_listHtml() {
     include( plugin_dir_path(__FILE__) . 'inner/kkgmp_list.php' );
-    $html = wp_kses('<div class="wrap">', array('div'));
+    $allowed = array(
+            'div' => array(
+                    'class' => true,
+                    )	
+            );
+    echo  wp_kses('<div class="wrap">', $allowed);
     $myListTable = new kkgmp_list_Table();
     $myListTable->prepare_items();
-    $html .= wp_kses('<form method="post">
-            <input type="hidden" name="page" value="kkg_musics" />', array('form', 'input'));
-    $html .= $myListTable->search_box('Search Music', 'search');
-    $html .= wp_kses('</form>', array('form'));
-    $html .= $myListTable->display();
-    $html .= '</div><!--wrap-->';
-    echo $html;
-}
+    $myListTable->search_box('Search', 'search');
+    echo  $myListTable->display();
+    echo  wp_kses('</div>', array('div'));
 
-function kkgmusic_addHtml() {
-    if (isset($_POST['action'])) {
-        check_admin_referer('kkg_music_save');
-        kkgmusic_save();
-    } else {
-        kkgmusic_form();
-    }
-}
-
-function kkgmusic_form() {
-    include( plugin_dir_path(__FILE__) . 'inner/kkgmp_url.php' );
-}
-
-function kkgmusic_save() {
-    global $wpdb;
-    check_admin_referer('kkg_music_save');
-    if (isset($_REQUEST['_wpnonce']) && wp_verify_nonce($_REQUEST['_wpnonce'], 'kkg_music_save')) {
-        $url = sanitize_url($_POST['musicUrl'], array('http', 'https'));
-        $title = sanitize_text_field($_POST['musicTitle']);
-        if (!filter_var($url, FILTER_VALIDATE_URL) === false) {
-            if (filter_has_var(INPUT_GET, 'action') && htmlspecialchars($_GET['action'], ENT_QUOTES) == 'edit') {
-                $musicId = filter_input(INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT);
-                $wpdb->update(
-                        $wpdb->base_prefix . KKG_MUSIC_TABLE,
-                        array('sub_musicurl' => $url, 'mtype' => '1', 'music_title' => $title),
-                        array('sub_id' => $musicId)
-                );
-            } else {
-                $wpdb->insert(
-                        $wpdb->base_prefix . KKG_MUSIC_TABLE,
-                        array('sub_musicurl' => $url, 'mtype' => '1', 'music_title' => $title),
-                        array('%s'),
-                );
-            }
-            wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=successu')), 307);
-
-            die;
-        } else {
-            wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=failure')), 307);
-            die;
-        }
-    } else {
-        die(__('Security check', 'kkg-music'));
-    }
 }
 
 function kkgmusic_getsingle($id = 0) {
@@ -182,7 +162,6 @@ function kkgmusic_getsingle($id = 0) {
 }
 
 function kkgmusic_musicAction($id = 0, $action = '') {
-    global $wpdb;
     if ($id != 0 && $action != '') {
         if ($action == 'delete') {
             $sMusic = new kkgmusic_music();
@@ -200,21 +179,27 @@ function kkgmusic_musicAction($id = 0, $action = '') {
 
 function kkgmusic_page_up() {
     ob_start();
-    kkgmusic_upHtml();
+    kkgmusic_up();
 }
-
-function kkgmusic_upHtml() {
-    if (isset($_POST['action'])) {
-        check_admin_referer('kkg_music_upload');
-        kkgmusic_upload();
-    } else {
-        kkgmusic_up();
-    }
-}
-
 function kkgmusic_up() {
     include( plugin_dir_path(__FILE__) . 'inner/kkgmp_upload.php' );
 }
+
+function kkgmusic_view() {
+    if (filter_input(INPUT_GET, 'page') == 'view_music' && filter_input(INPUT_GET, 'action') == 'view') {
+        $musicContent = kkgmusic_getsingle(filter_input(INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT));
+        if ($musicContent) {
+            wp_enqueue_style('fa-css-file', plugin_dir_url(__FILE__) . 'fontawesome/css/all.css');
+            wp_enqueue_script('fa-js-file', plugin_dir_url(__FILE__) . 'fontawesome/js/all.js');
+            include( plugin_dir_path(__FILE__) . 'inner/kkgmp_view.php' );
+        } else {
+            wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics')), 307);
+            die;
+        }
+    }
+}
+
+add_action('admin_post_kkg_music_upload', 'kkgmusic_upload');
 
 function kkgmusic_upload() {
     global $wpdb;
@@ -222,68 +207,86 @@ function kkgmusic_upload() {
         require_once( ABSPATH . 'wp-admin/includes/file.php' );
     }
     check_admin_referer('kkg_music_upload');
-    if (isset($_REQUEST['_wpnonce']) && wp_verify_nonce($_REQUEST['_wpnonce'], 'kkg_music_upload')) {
-        $action = sanitize_text_field($_POST['action']);
-        if ($action == 'kkg_music_upload') {
-            if (isset($_FILES) && ( $_FILES['chooseFile']['name'] != '' )) {
-                $uploadedfile = $_FILES['chooseFile'];
-                $upload_overrides = array(
-                    'test_form' => false
-                );
-
-                $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
-
-                if ($movefile && !isset($movefile['error'])) {
-                    $url = $movefile['url'];
-                    if (is_int(filter_input(INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT))) {
-                        $musicId = filter_input(INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT);
-                        $wpdb->update(
-                                $wpdb->base_prefix . KKG_MUSIC_TABLE,
-                                array('sub_musicurl' => $url, 'mtype' => '2'),
-                                array('sub_id' => $musicId)
-                        );
-                    } else {
-                        $wpdb->insert(
-                                $wpdb->base_prefix . KKG_MUSIC_TABLE,
-                                array('sub_musicurl' => $url, 'mtype' => '2'),
-                                array('%s'),
-                        );
-                    }
-                    wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=successf')), 307);
-                    die;
+    $postNum = sanitize_text_field(filter_input(INPUT_POST, 'postNum'));
+    $title = sanitize_text_field(filter_input(INPUT_POST, 'musicTitle'));
+    if (wp_verify_nonce(wp_unslash(filter_input(INPUT_POST, '_wpnonce')), 'kkg_music_upload')) {
+        if (isset($_FILES) && ( $_FILES['chooseFile']['name'] != '' )) {
+            $uploadedfile = $_FILES['chooseFile'];
+            $upload_overrides = array(
+                'test_form' => false
+            );
+            $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
+            if ($movefile && !isset($movefile['error'])) {
+                $url = $movefile['url'];
+                if (filter_has_var(INPUT_POST, 'postNum') && $postNum != 0) {
+                    $encMusicId = kkgmusic_encryptor('decrypt',$postNum);
+                    $wpdb->update(
+                            $wpdb->base_prefix . KKG_MUSIC_TABLE,
+                            array('sub_musicurl' => $url, 'mtype' => '2', 'music_title' => $title),
+                            array('sub_id' => $encMusicId)
+                    );
                 } else {
-                    /**
-                     * Error generated by _wp_handle_upload()
-                     * @see _wp_handle_upload() in wp-admin/includes/file.php
-                     */
-                    $GLOBALS['uploadError'] = $movefile['error'];
-                    wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=failure')), 307);
-                    die;
+                    $wpdb->insert(
+                            $wpdb->base_prefix . KKG_MUSIC_TABLE,
+                            array('sub_musicurl' => $url, 'mtype' => '2', 'music_title' => $title),
+                            array('%s'),
+                    );
                 }
-            }
-            wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=successf')), 307);
-            die;
-        }
-    } else {
-        die(__('Security check', 'kkg-music'));
-    }
-}
-
-function kkgmusic_view() {
-    if (isset($_GET['page']) && $_GET['page'] == 'view_music') {
-        if (isset($_GET['action']) && $_GET['action'] == 'view') {
-            $musicContent = kkgmusic_getsingle(filter_input(INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT));
-            if ($musicContent) {
-                wp_enqueue_style('fa-css-file', plugin_dir_url(__FILE__) . 'fontawesome/css/all.css');
-                wp_enqueue_script('fa-js-file', plugin_dir_url(__FILE__) . 'fontawesome/js/all.js');
-                include( plugin_dir_path(__FILE__) . 'inner/kkgmp_view.php' );
+                wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=successf')), 307);
+                die;
             } else {
-                wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics')), 307);
+                /**
+                 * Error generated by _wp_handle_upload()
+                 * @see _wp_handle_upload() in wp-admin/includes/file.php
+                 */
+                $GLOBALS['uploadError'] = $movefile['error'];
+                wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=failuref')), 307);
                 die;
             }
         }
+        wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=successf')), 307);
+        die;
+    } else {
+        die(esc_html__('Security check', 'kkg-music'));
     }
 }
+
+add_action('admin_post_kkg_music_save', 'kkgmusic_save');
+
+function kkgmusic_save() {
+    global $wpdb;
+    check_admin_referer('kkg_music_save');
+    if (wp_verify_nonce(wp_unslash(filter_input(INPUT_POST, '_wpnonce')), 'kkg_music_save')) {
+        $url = sanitize_url(filter_input(INPUT_POST, 'musicUrl', FILTER_SANITIZE_URL), array('http', 'https'));
+        $title = sanitize_text_field(filter_input(INPUT_POST, 'musicTitle'));
+        $postNum = sanitize_text_field(filter_input(INPUT_POST, 'postNum'));
+        if (!filter_var($url, FILTER_VALIDATE_URL) === false) {
+            if (filter_has_var(INPUT_POST, 'postNum') && $postNum != 0) {
+                $encMusicId = kkgmusic_encryptor('decrypt',$postNum);
+                $wpdb->update(
+                        $wpdb->base_prefix . KKG_MUSIC_TABLE,
+                        array('sub_musicurl' => $url, 'mtype' => '1', 'music_title' => $title),
+                        array('sub_id' => $encMusicId)
+                );
+            } else {
+                $wpdb->insert(
+                        $wpdb->base_prefix . KKG_MUSIC_TABLE,
+                        array('sub_musicurl' => $url, 'mtype' => '1', 'music_title' => $title),
+                        array('%s'),
+                );
+            }
+            wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=successu')), 307);
+
+            die;
+        } else {
+            wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics&status=failure')), 307);
+            die;
+        }
+    } else {
+        die(esc_html__('Security check', 'kkg-music'));
+    }
+}
+
 
 function kkgmusic_getfront() {
     $sMusic = new kkgmusic_music();

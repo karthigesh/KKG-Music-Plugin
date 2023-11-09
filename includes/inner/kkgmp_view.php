@@ -64,7 +64,7 @@ $viewMusicContent = $musicContent['sub_musicurl'];
                     let track_list = [
                         {
                             name: "<?php echo esc_html($viewMusicTitle); ?>",
-                            image: "<?php echo $viewMusicPlayer; ?>",
+                            image: "<?php echo esc_url($viewMusicPlayer); ?>",
                             path: "<?php echo esc_url($viewMusicContent); ?>"
                         }
                     ];

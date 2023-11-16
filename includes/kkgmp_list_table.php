@@ -47,8 +47,8 @@ class kkgmp_list_Table extends WP_List_Table {
     function prepare_items()
  {
         
-        if (filter_has_var(INPUT_POST, 's') && filter_has_var(INPUT_GET, 'page') && filter_input(INPUT_GET, 'page') == 'kkg_musics' ) {
-            $searchString = sanitize_text_field(filter_input(INPUT_POST, 's'));
+        if (filter_has_var(INPUT_POST, 's') && filter_has_var(INPUT_GET, 'page') && filter_input(INPUT_GET, 'page',FILTER_SANITIZE_SPECIAL_CHARS) == 'kkg_musics' ) {
+            $searchString = sanitize_text_field(filter_input(INPUT_POST, 's',FILTER_SANITIZE_SPECIAL_CHARS));
             $this->table_data = $this->get_table_data($searchString);
         } else {
             $this->table_data = $this->get_table_data();
@@ -110,19 +110,18 @@ class kkgmp_list_Table extends WP_List_Table {
 
     protected function get_sortable_columns()
  {
-        $sortable_columns = array(
+        return array(
             'sub_musicurl'  => array( 'sub_musicurl', false )
         );
-        return $sortable_columns;
     }
 
     public function search_box( $text, $input_id ) { ?>
         <form method="post">
         <p class="search-box">
-          <label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
-          <input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
-          <?php submit_button( $text, 'button', false, false, array('id' => 'search-submit') ); ?>
+          <label class="screen-reader-text" for="<?php echo esc_html($input_id); ?>"><?php echo esc_html($text); ?>:</label>
+          <input type="search" id="<?php echo esc_html($input_id); ?>" name="s" value="<?php _admin_search_query(); ?>" />
+          <?php submit_button( esc_html($text), 'button', false, false, array('id' => 'search-submit') ); ?>
       </p>
         </form>
     <?php }
-}
+    }

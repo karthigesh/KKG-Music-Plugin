@@ -33,8 +33,8 @@ $musicView = plugins_url( 'kkg_music/includes/inner/imgs/dvd.png', __FILE__ );
     if(isset($musicList) && (count($musicList)>0)){
       foreach($musicList as $k=>$musics){
         $musicSects[$k]['name'] = esc_html($musics['music_title']);
-        $musicSects[$k]['image'] = esc_url($musicView);
-        $musicSects[$k]['path'] = esc_url($musics['sub_musicurl']);
+        $musicSects[$k]['image'] = sanitize_url($musicView, array('http', 'https'));
+        $musicSects[$k]['path'] = sanitize_url($musics['sub_musicurl'], array('http', 'https'));
       }
     }
     ?>

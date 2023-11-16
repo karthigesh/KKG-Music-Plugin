@@ -21,7 +21,8 @@ class kkgmusic_music {
         global $wpdb;
         return $wpdb->get_row(
                         $wpdb->prepare(
-                                'SELECT * FROM ' . $wpdb->base_prefix . KKG_MUSIC_TABLE . ' WHERE sub_id = %d', array($this->musicId)
+                                'SELECT * FROM ' . $wpdb->base_prefix . KKG_MUSIC_TABLE . ' WHERE sub_id = %d',
+                                array($this->musicId)
                         ),
                         ARRAY_A);
     }
@@ -30,7 +31,8 @@ class kkgmusic_music {
         global $wpdb;
         return $wpdb->get_results(
                         $wpdb->prepare(
-                                'SELECT * FROM ' . $wpdb->base_prefix . KKG_MUSIC_TABLE . ' WHERE mtype IN (%d,%d);', array(1, 2)
+                                'SELECT * FROM ' . $wpdb->base_prefix . KKG_MUSIC_TABLE . ' WHERE mtype IN (%d,%d);',
+                                array(1, 2)
                         ),
                         ARRAY_A);
     }
@@ -45,4 +47,25 @@ class kkgmusic_music {
         );
     }
 
+    public function insMusic($data = []) {
+        global $wpdb;
+        if (is_array($data) && count($data) == 3) {
+            $wpdb->insert(
+                    $wpdb->base_prefix . KKG_MUSIC_TABLE,
+                    $data,
+                    array('%s')
+            );
+        }
+    }
+
+    public function updMusic($data = []) {
+        global $wpdb;
+        if (is_array($data) && count($data) == 3) {
+            $wpdb->update(
+                    $wpdb->base_prefix . KKG_MUSIC_TABLE,
+                    $data,
+                    array('sub_id' => $this->musicId)
+            );
+        }
+    }
 }

@@ -3,7 +3,7 @@ if (!defined('ABSPATH'))
     exit;
 $status = '';
 if (filter_has_var(INPUT_GET, 'status')) {
-    $stat = filter_input(INPUT_GET, 'status');
+    $stat = filter_input(INPUT_GET, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
     $status = '<div class="row mt-2"><div class="col-md-12">';
     switch ($stat) {
         case 'successu':
@@ -48,18 +48,19 @@ if (filter_has_var(INPUT_GET, 'status')) {
             <h1><?php echo esc_html(__('Welcome to KKG Music App!', 'kkg-music')); ?></h1>
         </div>
     </div> 
-<?php 
-$allowed = array(
-            'div' => array(
-                    'class' => true,
-                    'role' => true,
-                    )	
-            );
-echo wp_kses($status, $allowed); ?>   
+    <?php
+    $allowed = array(
+        'div' => array(
+            'class' => true,
+            'role' => true,
+        )
+    );
+    echo wp_kses($status, $allowed);
+    ?>   
     <div class='row mt-2'>
         <div class='col-md-12'>
-            <a href="<?php echo esc_url_raw(site_url('/wp-admin/admin.php?page=add_music')); ?>" class="page-title-action"><?php echo esc_html(__('Add new', 'kkg-music')); ?></a>
-            <a href="<?php echo esc_url_raw(site_url('/wp-admin/admin.php?page=up_music')); ?>" class="page-title-action"><?php echo esc_html(__('Upload', 'kkg-music')); ?></a>
+            <a href="<?php echo KKGMP_ADD_URL; ?>" class="page-title-action"><?php echo esc_html(__('Add new', 'kkg-music')); ?></a>
+            <a href="<?php echo KKGMP_UP_URL; ?>" class="page-title-action"><?php echo esc_html(__('Upload', 'kkg-music')); ?></a>
         </div>
     </div>
     <div class='row mt-2'>
@@ -67,4 +68,10 @@ echo wp_kses($status, $allowed); ?>
             <p><?php echo esc_html(__('Use Shortcode [view_kkg_music] in pages and post to display the music player in your themes.', 'kkg-music')); ?></p>
         </div>
     </div>
+    <?php
+    $myListTable = new kkgmp_list_Table();
+    $myListTable->prepare_items();
+    $myListTable->search_box('Search', 'search');
+    $myListTable->display()
+    ?>
 </div><!-- / wrap -->

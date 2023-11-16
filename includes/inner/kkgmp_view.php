@@ -1,10 +1,17 @@
 <?php
 if (!defined('ABSPATH'))
     exit; // Exit if accessed directly
-$musicContent = kkgmusic_getsingle(filter_input(INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT));
-$viewMusicTitle = $musicContent['music_title'];
+$input = absint( filter_input( INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT ) );
+$musicContent = kkgmusic_getsingle( $input );
+if(!$musicContent){
+    wp_safe_redirect(KKGMP_LIST_URL, 307);
+    die;
+}
+$viewMusicContent = ( isset( $musicContent[ 'sub_musicurl' ] ) )?$musicContent[ 'sub_musicurl' ]:'';
+$viewMusicTitle = ( isset( $musicContent[ 'music_title' ] ) )?esc_html( $musicContent[ 'music_title' ] ):'';
+$musicName = basename($musicUrl);
+$required = '';
 $viewMusicPlayer = plugins_url('imgs/dvd.png', __FILE__);
-$viewMusicContent = $musicContent['sub_musicurl'];
 ?>
 <div class = 'wrap'>
     <div class = 'row'>
@@ -64,8 +71,8 @@ $viewMusicContent = $musicContent['sub_musicurl'];
                     let track_list = [
                         {
                             name: "<?php echo esc_html($viewMusicTitle); ?>",
-                            image: "<?php echo esc_url($viewMusicPlayer); ?>",
-                            path: "<?php echo esc_url($viewMusicContent); ?>"
+                            image: "<?php echo sanitize_url($viewMusicPlayer, array('http', 'https')); ?>",
+                            path: "<?php echo sanitize_url($viewMusicContent, array('http', 'https')); ?>"
                         }
                     ];
 

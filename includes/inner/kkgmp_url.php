@@ -10,10 +10,10 @@ if ( filter_has_var( INPUT_GET, 'action' ) ) {
     $data = kkgmusic_getsingle( $input );
     if ( $data ) {
         $title =  'kindly Update the Music Streaming URL';
-        $musicUrl = ( isset( $data[ 'sub_musicurl' ] ) )?esc_url( $data[ 'sub_musicurl' ] ):'';
-        $musicTitle = ( isset( $data[ 'music_title' ] ) )?esc_html( $data[ 'music_title' ] ):'';
+        $musicUrl = ( isset( $data[ 'sub_musicurl' ] ) )?sanitize_url( $data[ 'sub_musicurl' ], array('http', 'https') ):'';
+        $musicTitle = ( isset( $data[ 'music_title' ] ) )?esc_attr( $data[ 'music_title' ] ):'';
     }else{
-        wp_safe_redirect(esc_url_raw(site_url('/wp-admin/admin.php?page=kkg_musics')), 307);
+        wp_safe_redirect(KKGMP_LIST_URL, 307);
         die;
     }
 }
@@ -31,7 +31,7 @@ $formmusicHidden = kkgmusic_render_input( 'hidden', 'action', '', 'kkg_music_sav
 </div>
 <form method = 'POST' action="<?php echo esc_attr('admin-post.php'); ?>">
 <input type = 'hidden' name = 'action' value = 'kkg_music_save'>
-<input type = 'hidden' name = 'postNum' value = '<?php echo sanitize_text_field($musicId);?>'>
+<input type = 'hidden' name = 'postNum' value = '<?php echo esc_html(sanitize_text_field($musicId));?>'>
 <?php wp_nonce_field( 'kkg_music_save' );
 echo wp_kses($formmusicHidden,array( 'input' => array('type' => array(),'name' => array(),'value' => array())));
 ?>

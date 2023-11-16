@@ -11,9 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         $data = kkgmusic_getsingle( $input );
         if($data){
           $musicUrl = ( isset( $data[ 'sub_musicurl' ] ) )?$data[ 'sub_musicurl' ]:'';
-          $musicTitle = ( isset( $data[ 'music_title' ] ) )?esc_html( $data[ 'music_title' ] ):'';
+          $musicTitle = ( isset( $data[ 'music_title' ] ) )?esc_attr( $data[ 'music_title' ] ):'';
           $musicName = basename($musicUrl);
           $required = '';
+        }else{
+            wp_safe_redirect(KKGMP_LIST_URL, 307);
+            die;
         }
     }
 $formmusicContent = kkgmusic_render_input( 'text', 'musicTitle', 'musicTitle', $musicTitle, TRUE );
@@ -27,8 +30,8 @@ $formmusicContent = kkgmusic_render_input( 'text', 'musicTitle', 'musicTitle', $
 <form method = 'POST' action="<?php echo esc_attr('admin-post.php'); ?>" enctype="multipart/form-data" >
     <input type="hidden" name="action" value="kkg_music_upload" />
 <?php wp_nonce_field( 'kkg_music_upload' ); ?> 
-<input type = 'hidden' name = 'existFile' value = '<?php echo esc_html($musicUrl);?>'>
-<input type = 'hidden' name = 'postNum' value = '<?php echo sanitize_text_field($musicId);?>'>
+<input type = 'hidden' name = 'existFile' value = '<?php echo esc_html(sanitize_text_field($musicUrl));?>'>
+<input type = 'hidden' name = 'postNum' value = '<?php echo esc_html(sanitize_text_field($musicId));?>'>
 <input type = 'hidden' name = 'redirectToUrl' value = ''>
 <div class = 'row mt-2'>
 <div class = 'col-md-4'>

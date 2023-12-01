@@ -59,8 +59,8 @@ if (filter_has_var(INPUT_GET, 'status')) {
     ?>   
     <div class='row mt-2'>
         <div class='col-md-12'>
-            <a href="<?php echo KKGMP_ADD_URL; ?>" class="page-title-action"><?php echo esc_html(__('Add new', 'kkg-music')); ?></a>
-            <a href="<?php echo KKGMP_UP_URL; ?>" class="page-title-action"><?php echo esc_html(__('Upload', 'kkg-music')); ?></a>
+            <a href="<?php echo esc_url(KKGMP_ADD_URL); ?>" class="page-title-action"><?php echo esc_html(__('Add new', 'kkg-music')); ?></a>
+            <a href="<?php echo esc_url(KKGMP_UP_URL); ?>" class="page-title-action"><?php echo esc_html(__('Upload', 'kkg-music')); ?></a>
         </div>
     </div>
     <div class='row mt-2'>

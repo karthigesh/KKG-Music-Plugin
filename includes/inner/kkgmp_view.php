@@ -9,7 +9,7 @@ if(!$musicContent){
 }
 $viewMusicContent = ( isset( $musicContent[ 'sub_musicurl' ] ) )?$musicContent[ 'sub_musicurl' ]:'';
 $viewMusicTitle = ( isset( $musicContent[ 'music_title' ] ) )?esc_html( $musicContent[ 'music_title' ] ):'';
-$musicName = basename($musicUrl);
+$musicName = basename($viewMusicContent);
 $required = '';
 $viewMusicPlayer = plugins_url('imgs/dvd.png', __FILE__);
 ?>
@@ -71,8 +71,8 @@ $viewMusicPlayer = plugins_url('imgs/dvd.png', __FILE__);
                     let track_list = [
                         {
                             name: "<?php echo esc_html($viewMusicTitle); ?>",
-                            image: "<?php echo sanitize_url($viewMusicPlayer, array('http', 'https')); ?>",
-                            path: "<?php echo sanitize_url($viewMusicContent, array('http', 'https')); ?>"
+                            image: "<?php echo esc_url(sanitize_url($viewMusicPlayer, array('http', 'https'))); ?>",
+                            path: "<?php echo esc_url(sanitize_url($viewMusicContent, array('http', 'https'))); ?>"
                         }
                     ];
 

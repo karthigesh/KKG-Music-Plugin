@@ -36,4 +36,25 @@ jQuery(function ($) {
             $('.urlsubmit').attr('disabled', true);
         }
     });
+    $('#delete_music').click(function(){
+        var id = $(this).data('id');
+        var url = $(this).data('url');
+        var nonce = $(this).data('nonce');
+        var action = $(this).data('action');
+        if (confirm("Are you sure to delete?")) {
+            $.ajax({
+                type : "post",
+                dataType : "json",
+                url : url,
+                data : {id: id, nonce : nonce, action: action},
+                success: function(response) {
+                if(response.status) {
+                        window.location.href = response.url;
+                }else {
+                    alert("Your vote could not be added")
+                }
+                }
+            });  
+        } 
+    });
 });

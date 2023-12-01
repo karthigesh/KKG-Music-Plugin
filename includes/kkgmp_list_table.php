@@ -34,12 +34,23 @@ class kkgmp_list_Table extends WP_List_Table {
     {
         $mode = $item[ 'mtype' ];
         $link = ($mode == 1)? 'add_music':'up_music';
+        $itemId = $item['sub_id'];
         $actions = array(
-                'edit'      => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', $link, 'edit', $item[ 'sub_id' ],esc_html(__('Edit', 'kkg-music'))),
-                'delete'    => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', 'kkg_musics', 'delete', $item[ 'sub_id' ],esc_html(__('Delete', 'kkg-music'))),
-                'view'    => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', 'view_music', 'view', $item[ 'sub_id' ],esc_html(__('View', 'kkg-music'))),
+                'edit'      => sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', $link, 'edit', $itemId,esc_html(__('Edit', 'kkg-music')))
         );
-        return sprintf('%1$s %2$s', $item['music_title'], $this->row_actions($actions));
+        $nonce = wp_create_nonce( 'kkgmusic_delete' );
+        $actions['delete'] = sprintf(
+            '<a id="%s" data-id="%s" data-nonce="%s" data-url="%s" data-action="%s">%s</a>',
+            'delete_music',
+            $itemId,
+            $nonce,
+            esc_attr('admin-ajax.php'),
+            'kkgmusic_delete',
+        esc_html(__('Delete', 'kkg-music'))
+        );
+        $mTitle = sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', $link, 'edit', $itemId,$item['music_title']);
+        $actions['view'] = sprintf('<a href="?page=%s&action=%s&element=%s">%s</a>', 'view_music', 'view', $itemId,esc_html(__('View', 'kkg-music')));
+        return sprintf('%1$s %2$s', $mTitle, $this->row_actions($actions));
     }
 
     // Bind table with columns, data and all
@@ -79,15 +90,25 @@ class kkgmp_list_Table extends WP_List_Table {
     private function get_table_data($s="") {
         global $wpdb;
 
-        $table = $wpdb->prefix . 'kkg_music_submissions';
+        $table = $wpdb->prefix . KKG_MUSIC_TABLE;
         $query = "SELECT * from {$table}";
         if($s != ""){
             $query .= " where music_title like '%{$s}%'";
+            return $wpdb->get_results(
+                $wpdb->prepare(
+                        $query,
+                        array($s)
+                ),
+                ARRAY_A);
+        }else{
+            $query .= " where mtype IN (%d,%d)";
+            return $wpdb->get_results(
+                $wpdb->prepare(
+                        $query,
+                        array(1,2)
+                ),
+                ARRAY_A);
         }
-        return $wpdb->get_results(
-            $query,
-            ARRAY_A
-        );
     }
 
     function column_default( $item, $column_name )

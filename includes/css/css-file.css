@@ -291,6 +291,13 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
   .animatesect{
     display: none;
   }
+
+  .kkgmp_upload .form-field input {
+    width: 25em;
+  }
+  .kkgmp_upload .form-field .file-upload {
+    width: 33em;
+  }
   @keyframes to-top {
     to {
       bottom: 350%;

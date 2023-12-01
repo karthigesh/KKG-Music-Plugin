@@ -29,32 +29,25 @@ $formmusicHidden = kkgmusic_render_input( 'hidden', 'action', '', 'kkg_music_sav
 ?></h1>
 </div>
 </div>
-<form method = 'POST' action="<?php echo esc_attr('admin-post.php'); ?>">
+<form method = 'POST' action="<?php echo esc_attr('admin-post.php'); ?>" class="kkgmp_upload" >
 <input type = 'hidden' name = 'action' value = 'kkg_music_save'>
 <input type = 'hidden' name = 'postNum' value = '<?php echo esc_html(sanitize_text_field($musicId));?>'>
 <?php wp_nonce_field( 'kkg_music_save' );
 echo wp_kses($formmusicHidden,array( 'input' => array('type' => array(),'name' => array(),'value' => array())));
 ?>
-<div class = 'row mt-2'>
-<div class = 'col-md-4'>
-<p><?php echo esc_html( 'Title' );
-?></p>
-</div>
-<div class = 'col-md-8'>
-<?php echo wp_kses($formmusicContent,array( 'input' => array('type' => array(),'id' => array(),'name' => array(),'class' => array(),'value' => array(),'required' => array())));
-?>
-</div>
-</div><!-- / row -->
-<div class = 'row mt-3'>
-<div class = 'col-md-4'>
-<p><?php echo esc_html($formmusicTitle);
-?></p>
-</div>
-<div class = 'col-md-8'>
-<?php echo wp_kses($formmusicUrl,array( 'input' => array('type' => array(),'id' => array(),'name' => array(),'class' => array(),'value' => array(),'required' => array())));?>
-</div>
-</div><!-- / row -->
-<input type = 'submit' name = 'Submit' class = 'btn btn-primary urlsubmit'>
+<table class="form-table" role="presentation">
+<tr class="form-field form-required">
+    <th scope="row"><label for="musicTitle"><?php _e( 'Title' ); ?> <span class="description"><?php _e( '(required)' ); ?></span></label></th>
+    <td><?php echo wp_kses($formmusicContent,array( 'input' => array('type' => array(),'id' => array(),'name' => array(),'class' => array(),'value' => array(),'required' => array())));
+?></td>
+</tr>
+<tr class="form-field form-required">
+    <th scope="row"><label for="musicUrl"><?php _e( $formmusicTitle ); ?> <span class="description"><?php _e( '(required)' ); ?></span></label></th>
+    <td><?php echo wp_kses($formmusicUrl,array( 'input' => array('type' => array(),'id' => array(),'name' => array(),'class' => array(),'value' => array(),'required' => array())));
+?></td>
+</tr>
+</table>
+<input type = 'submit' name = 'Submit' class = 'button button-primary urlsubmit'>
 </form>
 </div><!-- / wrap -->
 

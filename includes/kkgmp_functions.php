@@ -195,11 +195,10 @@ function kkgmusic_upload() {
             $filePath = "/kkgmusic_uploads/" . $_FILES['chooseFile']['name'];
             $destination = $uploads_dir['basedir']."/kkgmusic_uploads/" . $_FILES['chooseFile']['name'];
             $dbpath = str_replace(ABSPATH,'',$uploads_dir['basedir']);    
-            $movefile = move_uploaded_file( $source, $destination );
-            if ($movefile) {
-                $fileUrl = get_site_url().'/'.$dbpath.$filePath;
+            $movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
+            if ($movefile && isset( $movefile['file'] )) {
+                $url = $movefile['file'];
                 $sMusic = new kkgmusic_music();
-                $url = $fileUrl;
                 $upData = array('sub_musicurl' => $url, 'mtype' => '2', 'music_title' => $title);
                 if (filter_has_var(INPUT_POST, 'postNum') && $postNum != 0) {
                     $encMusicId = kkgmusic_encryptor('decrypt', $postNum);

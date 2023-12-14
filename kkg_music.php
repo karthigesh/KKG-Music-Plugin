@@ -1,5 +1,4 @@
 <?php
-
 /*
   Plugin Name: KKG Music
   Description: It used to create a music link!
@@ -35,7 +34,6 @@ global $kkgmusic_db_version;
 $kkgmusic_db_version = '1.0';
 
 function kkgmusic_create_table(){
-
     global $wpdb;
     $kkgmdb   = apply_filters( 'kkgmusic_database', $wpdb );
     $table_name = $kkgmdb->prefix.KKG_MUSIC_TABLE;
@@ -57,7 +55,6 @@ function kkgmusic_create_table(){
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
     }
-
     $upload_dir    = wp_upload_dir();
     $kkgmdb7_dirname = $upload_dir['basedir'].'/kkgmusic_uploads';
     if ( ! file_exists( $kkgmdb7_dirname ) ) {
@@ -127,5 +124,4 @@ function kkgmusic_on_deactivate() {
 		$wp_roles->remove_cap( $role, 'kkgmp_access' );
 	}
 }
-
 register_deactivation_hook( __FILE__, 'kkgmusic_on_deactivate' );

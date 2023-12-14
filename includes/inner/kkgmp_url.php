@@ -3,13 +3,11 @@ if ( ! defined( 'ABSPATH' ) ){ exit;}
 // Exit if accessed directly
 $musicUrl = $musicTitle = '';
 $musicId = 0;
-$title =  'kindly Enter the Music Streaming URL' ;
 if ( filter_has_var( INPUT_GET, 'action' ) ) {
     $input = absint( filter_input( INPUT_GET, 'element', FILTER_SANITIZE_NUMBER_INT ) );
     $musicId = kkgmusic_encryptor('encrypt', $input);
     $data = kkgmusic_getsingle( $input );
     if ( $data ) {
-        $title =  'kindly Update the Music Streaming URL';
         $musicUrl = ( isset( $data[ 'sub_musicurl' ] ) )?sanitize_url( $data[ 'sub_musicurl' ], array('http', 'https') ):'';
         $musicTitle = ( isset( $data[ 'music_title' ] ) )?esc_attr( $data[ 'music_title' ] ):'';
     }else{
@@ -17,7 +15,6 @@ if ( filter_has_var( INPUT_GET, 'action' ) ) {
         die;
     }
 }
-$formmusicTitle = $title;
 $formmusicUrl = kkgmusic_render_input( 'url', 'musicUrl', 'musicUrl', $musicUrl, TRUE );
 $formmusicContent = kkgmusic_render_input( 'text', 'musicTitle', 'musicTitle', $musicTitle, TRUE );
 $formmusicHidden = kkgmusic_render_input( 'hidden', 'action', '', 'kkg_music_save');
@@ -42,7 +39,7 @@ echo wp_kses($formmusicHidden,array( 'input' => array('type' => array(),'name' =
 ?></td>
 </tr>
 <tr class="form-field form-required">
-    <th scope="row"><label for="musicUrl"><?php _e( $formmusicTitle ); ?> <span class="description"><?php _e( '(required)' ); ?></span></label></th>
+    <th scope="row"><label for="musicUrl"><?php _e('kindly Enter the Music Streaming URL' ); ?> <span class="description"><?php _e( '(required)' ); ?></span></label></th>
     <td><?php echo wp_kses($formmusicUrl,array( 'input' => array('type' => array(),'id' => array(),'name' => array(),'class' => array(),'value' => array(),'required' => array())));
 ?></td>
 </tr>

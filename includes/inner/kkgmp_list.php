@@ -65,7 +65,7 @@ if (filter_has_var(INPUT_GET, 'status')) {
     </div>
     <div class='row mt-2'>
         <div class='col-md-12'>
-            <p><?php echo esc_html(__('Use Shortcode [view_kkg_music] in pages and post to display the music player in your themes.', 'kkg-music')); ?></p>
+            <p><?php echo esc_html(__('Use Shortcode [view_kkg_music element={{element}}] in pages and post to display the music player in your themes.', 'kkg-music')); ?></p>
         </div>
     </div>
     <?php

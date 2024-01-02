@@ -57,4 +57,48 @@ jQuery(function ($) {
             });  
         } 
     });
+    $('.show-hide').hide();
+    $('.music_chooseType').click(function(){
+        var nv = $(this).val();
+        $('.show-hide').hide();
+        $('.show-'+nv).show();
+        if(nv == 'url'){
+            $('#kkgmusic_url').attr('required',true);
+        }else{
+            $('#kkgmusic_url').removeAttr('required');                       
+        }
+    }).click();
+    var custom_uploader;
+    $('#kkg_up_btn').click(function(){
+        //If the uploader object has already been created, reopen the dialog
+        if (custom_uploader) {
+            custom_uploader.open();
+            return;
+        }
+        //Extend the wp.media object
+        custom_uploader = wp.media.frames.file_frame = wp.media({
+            title: 'Choose Music',
+            button: {
+                text: 'Choose Music'
+            },
+            multiple: false
+        });
+
+        //When a file is selected, grab the URL and set it as the text field's value
+        custom_uploader.on('select', function() {
+            attachment = custom_uploader.state().get('selection').first().toJSON();
+            if(attachment.type === "audio"){
+                $('#kkgmusic_file').val(attachment.url);
+                $('#kkgmusic_filename').val(attachment.filename);
+            }else{
+                alert('wrong file');                
+                $('#kkgmusic_file').val("");
+                $('#kkgmusic_filename').val("");
+            }
+        });
+
+        //Open the uploader dialog
+        custom_uploader.open();
+    });
+
 });

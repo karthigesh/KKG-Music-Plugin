@@ -464,3 +464,59 @@
     left: -123px;
     width: 120px;
   }
+  [class*=icono-] {
+      display: inline-block;
+      vertical-align: middle;
+      position: relative;
+      font-style: normal;
+      color: #ddd;
+      text-align: left;
+      text-indent: -9999px;
+      direction: ltr;
+  }
+  .icono-volumeMedium:before{
+    border: 2px solid;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    border-radius: 50%;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    left: 2px;
+    border-style: double;
+    border-width: 6px;
+    left: -2px;
+    content: '';
+    pointer-events: none;
+  }
+
+.icono-volumeHigh:before, .icono-volumeMedium:before {
+      border-style: double;
+      border-width: 6px;
+      left: -2px;
+  }
+[class*=icono-]:after, [class*=icono-]:before {
+  content: '';
+  pointer-events: none;
+}
+
+.icono-volume, .icono-volumeDecrease, .icono-volumeHigh, .icono-volumeIncrease, .icono-volumeLow, .icono-volumeMedium, .icono-volumeMute {
+  width: 0;
+  height: 0;
+  border: 7px solid;
+  border-left: none;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  padding: 6px 3px;
+  box-shadow: inset 4px 0;
+  margin: 4px 10px 4px 11px;
+}
+.icono-volumeHigh, .icono-volumeMedium {
+  margin: 4px 16px 4px 5px;
+}

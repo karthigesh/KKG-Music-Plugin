@@ -18,54 +18,26 @@ class kkgmusic_music {
     }
 
     public function getSingleMusic() {
-        global $wpdb;
-        return $wpdb->get_row(
-                        $wpdb->prepare(
-                                'SELECT * FROM ' . $wpdb->base_prefix . KKG_MUSIC_TABLE . ' WHERE sub_id = %d',
-                                array($this->musicId)
-                        ),
-                        ARRAY_A);
+        $musicList[] = get_post_meta($this->musicId,'_kkgmusic',true);
+        return implode(',',$musicList);
     }
 
     public function getAllMusic() {
-        global $wpdb;
-        return $wpdb->get_results(
-                        $wpdb->prepare(
-                                'SELECT * FROM ' . $wpdb->base_prefix . KKG_MUSIC_TABLE . ' WHERE mtype IN (%d,%d);',
-                                array(1, 2)
-                        ),
-                        ARRAY_A);
-    }
-
-    public function deleteMusic() {
-        global $wpdb;
-        return $wpdb->query(
-                        $wpdb->prepare(
-                                'DELETE FROM ' . $wpdb->base_prefix . KKG_MUSIC_TABLE . ' WHERE sub_id = %d;',
-                                array($this->musicId)
-                        )
+        $posts = get_posts(array(
+            'post_type'   => 'kkg_musics',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'fields' => 'ids'
+            )
         );
-    }
-
-    public function insMusic($data = []) {
-        global $wpdb;
-        if (is_array($data) && count($data) == 3) {
-            $wpdb->insert(
-                    $wpdb->base_prefix . KKG_MUSIC_TABLE,
-                    $data,
-                    array('%s')
-            );
+        $musicList = [];
+        //loop over each post
+        foreach($posts as $p){
+            //get the meta you need form each post
+            $musicList[] = get_post_meta($p,'_kkgmusic',true);
+            //do whatever you want with it
         }
+        return implode(',',$musicList);
     }
-
-    public function updMusic($data = []) {
-        global $wpdb;
-        if (is_array($data) && count($data) == 3) {
-            $wpdb->update(
-                    $wpdb->base_prefix . KKG_MUSIC_TABLE,
-                    $data,
-                    array('sub_id' => $this->musicId)
-            );
-        }
-    }
+    
 }

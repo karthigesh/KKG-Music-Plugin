@@ -6,81 +6,12 @@
 
 const audioPlayer = document.querySelector(".audio-player");
 const audUrl = audioPlayer.dataset.id;
-const audio = new Audio(
-    audUrl
-  //"https://ia800905.us.archive.org/19/items/FREE_background_music_dhalius/backsound.mp3"
+lstsongNames = audUrl.split(",");
+var curPlaying = 0;
+var audio = new Audio(
+  lstsongNames[curPlaying]
 );
-//credit for song: Adrian kreativaweb@gmail.com
-
-console.dir(audio);
-
-audio.addEventListener(
-  "loadeddata",
-  () => {
-    audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(
-      audio.duration
-    );
-    audio.volume = .75;
-  },
-  false
-);
-
-//click on timeline to skip around
-const timeline = audioPlayer.querySelector(".timeline");
-timeline.addEventListener("click", e => {
-  const timelineWidth = window.getComputedStyle(timeline).width;
-  const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
-  audio.currentTime = timeToSeek;
-}, false);
-
-//click volume slider to change volume
-const volumeSlider = audioPlayer.querySelector(".controls .volume-slider");
-volumeSlider.addEventListener('click', e => {
-  const sliderWidth = window.getComputedStyle(volumeSlider).width;
-  const newVolume = e.offsetX / parseInt(sliderWidth);
-  audio.volume = newVolume;
-  audioPlayer.querySelector(".controls .volume-percentage").style.width = newVolume * 100 + '%';
-}, false)
-
-//check audio percentage and update time accordingly
-setInterval(() => {
-  const progressBar = audioPlayer.querySelector(".progress");
-  progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-  audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
-    audio.currentTime
-  );
-}, 500);
-
-//toggle between playing and pausing on button click
-const playBtn = audioPlayer.querySelector(".controls .toggle-play");
-playBtn.addEventListener(
-  "click",
-  () => {
-    if (audio.paused) {
-      playBtn.classList.remove("play");
-      playBtn.classList.add("pause");
-      audio.play();
-    } else {
-      playBtn.classList.remove("pause");
-      playBtn.classList.add("play");
-      audio.pause();
-    }
-  },
-  false
-);
-
-audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
-  const volumeEl = audioPlayer.querySelector(".volume-container .volume");
-  audio.muted = !audio.muted;
-  if (audio.muted) {
-    volumeEl.classList.remove("icono-volumeMedium");
-    volumeEl.classList.add("icono-volumeMute");
-  } else {
-    volumeEl.classList.add("icono-volumeMedium");
-    volumeEl.classList.remove("icono-volumeMute");
-  }
-});
-
+normalPlay(0);
 //turn 128 seconds into 2:08
 function getTimeCodeFromNum(num) {
   let seconds = parseInt(num);
@@ -94,3 +25,99 @@ function getTimeCodeFromNum(num) {
     seconds % 60
   ).padStart(2, 0)}`;
 }
+
+function normalPlay(id) { 
+  //toggle between playing and pausing on button click
+  const playBtn = audioPlayer.querySelector(".controls .toggle-play");
+  if(id === 2){
+    playBtn.classList.add("play");
+    playBtn.classList.remove("pause");
+  }else{
+    audio.addEventListener(
+      "loadeddata",
+      () => {
+        audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(
+          audio.duration
+        );
+        audio.volume = .75;
+      },
+      false
+    );
+  
+    //click on timeline to skip around
+    const timeline = audioPlayer.querySelector(".timeline");
+    timeline.addEventListener("click", e => {
+      const timelineWidth = window.getComputedStyle(timeline).width;
+      const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
+      audio.currentTime = timeToSeek;
+    }, false);
+  
+    //click volume slider to change volume
+    const volumeSlider = audioPlayer.querySelector(".audio-player .controls .volume-slider");
+    volumeSlider.addEventListener('click', e => {
+      const sliderWidth = window.getComputedStyle(volumeSlider).width;
+      const newVolume = e.offsetX / parseInt(sliderWidth);
+      audio.volume = newVolume;
+      audioPlayer.querySelector(".audio-player .controls .volume-percentage").style.width = newVolume * 100 + '%';
+    }, false)
+  
+    //check audio percentage and update time accordingly
+    setInterval(() => {
+      const progressBar = audioPlayer.querySelector(".progress");
+      progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+      audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
+        audio.currentTime
+      );
+    }, 500);
+    
+    playBtn.addEventListener(
+      "click",
+      () => {
+        if (audio.paused) {
+          playBtn.classList.remove("play");
+          playBtn.classList.add("pause");
+          audio.play();
+        } else {
+          playBtn.classList.remove("pause");
+          playBtn.classList.add("play");
+          audio.pause();
+        }
+      },
+      false
+    );
+  
+    audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
+      const volumeEl = audioPlayer.querySelector(".volume-container .volume");
+      audio.muted = !audio.muted;
+      if (audio.muted) {
+        volumeEl.classList.remove("icono-volumeMedium");
+        volumeEl.classList.add("icono-volumeMute");
+      } else {
+        volumeEl.classList.add("icono-volumeMedium");
+        volumeEl.classList.remove("icono-volumeMute");
+      }
+    });
+    if(id === 1){
+      playBtn.classList.remove("play");
+      playBtn.classList.add("pause");
+      audio.play();
+    }
+  }
+  
+}
+
+// Attaches an event ended and it gets fired when current playing song get ended
+audio.addEventListener('ended', function () {
+  var urls = lstsongNames;
+  curPlaying = curPlaying + 1;
+  // Checks whether last song is already run
+  if (typeof lstsongNames[curPlaying] != "undefined") {
+    audio = new Audio(
+      lstsongNames[curPlaying]
+    );
+    normalPlay(1);
+  }else{
+    normalPlay(2);    
+  }
+
+});

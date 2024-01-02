@@ -14,9 +14,3 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-
-global $wpdb;
-
-// Delete entries table.
-$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'kkg_music_submissions' );
-

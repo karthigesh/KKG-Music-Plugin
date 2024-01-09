@@ -11,7 +11,7 @@
     </div>
 </div>
 <div class="mt-3 mb-3">
-    <div class="row show-hide show-url"> 
+    <div class="row show-hide show-url" <?php echo esc_html( $choosen_url_display);?>> 
         <div class="col-md-3">     
             <label for="choosen_url" class="show_if_music" style="">
                 <?php echo esc_html( 'Url:');?>            
@@ -21,7 +21,7 @@
         <input type="url" style="width:100%" id="kkgmusic_url" name="kkgmusic_url" value="<?php echo esc_attr( $musicurl );?>">
         </div>
     </div>
-    <div class="row show-hide show-upload"> 
+    <div class="row show-hide show-upload" <?php echo esc_html( $choosen_up_display);?>> 
         <div class="col-md-3">     
             <label for="choosen_upload" class="show_if_music" style="">
                 <?php echo esc_html( 'Upload:');?>           
@@ -34,7 +34,7 @@
         </div>
     </div>
     <?php if(esc_attr( $musicurl ) != ""){?>  
-    <div class="row show-music">         
+    <div class="row show-music mt-3">         
         <div class="col-md-9">
         <audio controls controlsList="nodownload noremoteplayback ">
             <source src="<?php echo esc_attr( $musicurl );?>" type="audio/mp3">

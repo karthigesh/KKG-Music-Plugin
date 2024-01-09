@@ -69,19 +69,28 @@ function kkgmusic_postType() {
 }
 
 function kkgmusic_meta_box_callback( $post ) {
-
     // Add a nonce field so we can check for it later.
     wp_nonce_field( 'kkgmusic_nonce', 'kkgmusic_nonce' );
     $musicmode = get_post_meta( $post->ID, '_kkgmusic_mode', true );
     $choosen_url = $choosen_up = '';
+    $choosen_url_display = $choosen_up_display = 'style="display: none;"';
     if ( $musicmode == 'url' ) {
         $choosen_url = 'checked';
+        $choosen_url_display = '';
     } else if ( $musicmode == 'upload' ) {
         $choosen_up = 'checked';
+        $choosen_up_display = '';
     }
     $musicurl = get_post_meta( $post->ID, '_kkgmusic', true );
     $musicfilename = get_post_meta( $post->ID, '_kkgmusic_filename', true );
     include( plugin_dir_path( __FILE__ ) . 'inner/kkgmp_metabox.php' );
+}
+
+function kkgmusic_meta_box_shortcode( $post ) {
+    // Add a nonce field so we can check for it later.
+    $str = '<div class="mt-3 mb-3">Use the shortcode <b>[viewkkgmusic id='.$post->ID.']</b> to display the music in your pages or posts</div>';
+    $allow = array( 'b' => array(),'div' => array('class'=>array()));
+    echo wp_kses( $str, $allow );
 }
 
 function kkgmusic_meta_box() {
@@ -93,6 +102,14 @@ function kkgmusic_meta_box() {
             'KKG-Music',
             __( 'Music Field', 'kkg-music' ),
             'kkgmusic_meta_box_callback',
+            $screen,
+            'advanced',
+            'high'
+        );
+        add_meta_box(
+            'KKG-Music1',
+            __( 'Music ShortCode', 'kkg-music' ),
+            'kkgmusic_meta_box_shortcode',
             $screen,
             'advanced',
             'high'
@@ -257,12 +274,3 @@ function kkgmusic_wpautopcontent($content) {
 }
 add_action( 'wp_content', 'kkgmusic_wpautop' );
 
-
-add_action('manage_posts_extra_tablenav', 'add_extra_button');
-function add_extra_button($where)
-{
-    global $post_type_object;
-    if ($post_type_object->name === 'kkg_musics') {
-        // Do something
-    }
-}

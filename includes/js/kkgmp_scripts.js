@@ -67,7 +67,14 @@ jQuery(function ($) {
         }else{
             $('#kkgmusic_url').removeAttr('required');                       
         }
-    }).click();
+    });
+
+    if($('#choosen_url').is(':checked')){
+        $('.show-url').show();
+    }
+    if($('#choosen_up').is(':checked')){
+        $('.show-upload').show();
+    }
     var custom_uploader;
     $('#kkg_up_btn').click(function(){
         //If the uploader object has already been created, reopen the dialog

@@ -82,15 +82,6 @@ function kkgmusic_meta_box_callback($post) {
     // Add a nonce field so we can check for it later.
     wp_nonce_field('kkgmusic_nonce', 'kkgmusic_nonce');
     $musicmode = get_post_meta($post->ID, '_kkgmusic_mode', true);
-    $choosen_url = $choosen_up = '';
-    $choosen_url_display = $choosen_up_display = 'style="display: none;"';
-    if ($musicmode == 'url') {
-        $choosen_url = 'checked';
-        $choosen_url_display = '';
-    } else if ($musicmode == 'upload') {
-        $choosen_up = 'checked';
-        $choosen_up_display = '';
-    }
     $musicurl = get_post_meta($post->ID, '_kkgmusic', true);
     $musicfilename = get_post_meta($post->ID, '_kkgmusic_filename', true);
     include( plugin_dir_path(__FILE__) . 'inner/kkgmp_metabox.php' );

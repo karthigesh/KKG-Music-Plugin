@@ -278,7 +278,7 @@ add_filter('upload_mimes', 'kkgmusic_restrict_mimes');
 function kkgmusic_restrict_mimes($mimes) {
     global $post;
     if ('kkg_musics' == $post->post_type) {
-        $mimes = array('pdf' => 'application/pdf');
+        $mimes = array('mp3|m4a|m4b'=> 'audio/mpeg',);
         return $mimes;
     }
 }
